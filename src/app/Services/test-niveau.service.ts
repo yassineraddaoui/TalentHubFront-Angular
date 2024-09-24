@@ -23,6 +23,9 @@ export class TestNiveauService {
   public getTests(): Observable<TestNiveau>{
     return this.http.get<TestNiveau>(`${this.apiServerUrl}/test/all`);
   }
+  public getTestsUser(userId : string): Observable<TestNiveau[]>{
+    return this.http.get<TestNiveau[]>(`${this.apiServerUrl}/test/user/${userId}`);
+  }
 
   public addQuestionToTest(idtest: number, idquestion: number): Observable<TestNiveau>{
     return this.http.get<TestNiveau>(`${this.apiServerUrl}/test/${idtest}/${idquestion}`);

@@ -47,7 +47,8 @@ export class AfficherTestComponent implements OnInit {
       questions:[],
       nb_questions:0,
       duree:0,
-      scoreTests:[]
+      scoreTests:[],
+    user_id:""
   };
   private vrais = 0;
   public role = "";
@@ -115,7 +116,7 @@ export class AfficherTestComponent implements OnInit {
                             this.router.navigate(['/detailOffre'], { queryParams: { idO: this.idoffre , idR: this.idrec} });
                         },
                         (error: HttpErrorResponse) => {
-     
+
                         });
             },
             (error: HttpErrorResponse) => {

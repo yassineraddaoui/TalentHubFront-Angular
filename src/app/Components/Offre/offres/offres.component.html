@@ -123,14 +123,41 @@
             <mat-label>Description de l'offre</mat-label>
             <textarea style=" width: 300px;height: 512px" matInput name="description" [(ngModel)]="offre.description" required></textarea>
         </mat-form-field>
+        <section style="margin-top: 10px">
+                <label>Select test(s) required for the Job:</label>
 
+                <p><mat-checkbox style="margin: 10px;" color="primary" *ngFor="let test of tests" value="{{test}}"(change)="onChange(test)">{{test.titre}}</mat-checkbox></p>
+        </section>
         <div style="width: 200px;margin-left: 510px">
             <button mat-flat-button color="primary" (click)="ajoutOffre()">Annuler</button>
             <button style="margin-left: 10px" mat-flat-button color="primary" [disabled]="addOffre.invalid" type="submit">Ajouter</button>
         </div>
 
     </form>
-
+   
+        <!-- <mat-card
+                  style="
+                    margin: 5px;
+                    width: max-content;
+                    height: max-content;
+                    display: flex;
+                    justify-content: space-between;
+                  "
+                  *ngFor="let test of tests"
+                >
+                  <mat-card-title style="color: #3f51b4">{{ test.titre }}</mat-card-title>
+                  <div>
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      (click)="selectTest(test.id)"
+                    >
+                      <mat-icon>
+                        <span class="material-symbols-outlined">open_in_new</span>
+                      </mat-icon>
+                    </button>
+                  </div>
+                </mat-card> -->
     <div style="display: flex;flex-wrap: wrap;">
 
         <mat-card style="margin: 5px; width: 100%;height: 150px;" *ngFor="let offre of recruteurOfres | paginate: { id: 'no',itemsPerPage: 3, currentPage: p }">
@@ -164,12 +191,15 @@
                     {{offre.type_poste}}
                     <mat-icon color="primary" style="margin-left: 20px"><span class="material-symbols-outlined">schedule</span></mat-icon>
                     {{offre.disponibilite}}
+                      
                 </div>
                 <button mat-icon-button (click)="getDetails(offre.id, idUser)" matTooltip="Voir plus">
                     <mat-icon color="primary"><span class="material-symbols-outlined">read_more</span></mat-icon>
                 </button>
             </mat-card-content>
         </mat-card>
+  
+      
         <pagination-controls style="margin: auto; padding-top: 20px" (pageChange)="p = $event" id="no" *ngIf="recruteurOfres.length>3"></pagination-controls>
 
     </div>

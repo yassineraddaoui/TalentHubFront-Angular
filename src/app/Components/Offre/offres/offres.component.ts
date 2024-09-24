@@ -1,31 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import {Offres} from "../../../Entity/Offres";
-import {NgForm} from "@angular/forms";
-import {HttpErrorResponse} from "@angular/common/http";
-import {UserAuthentificationService} from "../../../Services/user-authentification.service";
-import {OffreService} from "../../../Services/offre.service";
-import {RecruteurService} from "../../../Services/recruteur.service";
-import {Recruteur} from "../../../Entity/Recruteur";
-import {MatDialog} from "@angular/material/dialog";
-import {ValiderSuppressionComponent} from "../valider-suppression/valider-suppression.component";
-import {ActivatedRoute, Router} from "@angular/router";
-import {ModifierOffreComponent} from "../modifier-offre/modifier-offre.component";
-import {DatePipe} from "@angular/common";
-import {CandidatService} from "../../../Services/candidat.service";
-import {Candidat} from "../../../Entity/Candidat";
-import {AddTestOffreComponent} from "../add-test-offre/add-test-offre.component";
-import {NotificationService} from "../../../Services/notification.service";
+import { Offres } from "../../../Entity/Offres";
+import { NgForm } from "@angular/forms";
+import { HttpErrorResponse } from "@angular/common/http";
+import { UserAuthentificationService } from "../../../Services/user-authentification.service";
+import { OffreService } from "../../../Services/offre.service";
+import { RecruteurService } from "../../../Services/recruteur.service";
+import { Recruteur } from "../../../Entity/Recruteur";
+import { MatDialog } from "@angular/material/dialog";
+import { ValiderSuppressionComponent } from "../valider-suppression/valider-suppression.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import { ModifierOffreComponent } from "../modifier-offre/modifier-offre.component";
+import { DatePipe } from "@angular/common";
+import { CandidatService } from "../../../Services/candidat.service";
+import { Candidat } from "../../../Entity/Candidat";
+import { AddTestOffreComponent } from "../add-test-offre/add-test-offre.component";
+import { NotificationService } from "../../../Services/notification.service";
+import { TestNiveauService } from 'src/app/Services/test-niveau.service';
+import { TestNiveau } from 'src/app/Entity/TestNiveau';
+import { Observable } from 'rxjs';
 @Component({
-  selector: 'app-offres',
-  templateUrl: './offres.component.html',
-  styleUrls: ['./offres.component.css'],
+    selector: 'app-offres',
+    templateUrl: './offres.component.html',
+    styleUrls: ['./offres.component.css'],
     providers: [DatePipe]
 })
 export class OffresComponent implements OnInit {
+    selectTest(arg0: number) {
+        throw new Error('Method not implemented.');
+    }
 
     centered = false;
     disabled = false;
-
     public offre: Offres = {
         id: 0,
         titre: "",
@@ -40,7 +45,7 @@ export class OffresComponent implements OnInit {
         salaire: 0,
         disponibilite: "",
         postulations: [],
-        testNiveaus:[]
+        testNiveaus: []
     }
 
     public addoffre: boolean = false;
@@ -51,96 +56,115 @@ export class OffresComponent implements OnInit {
     myDate = new Date();
     date: any;
     p: number = 1;
-      constructor(private userAuthentificationService:UserAuthentificationService,
-                  private offreService: OffreService,
-                  private recruteurService: RecruteurService,
-                  public dialog: MatDialog,
-                  private route: ActivatedRoute,
-                  private router: Router,
-                  private datePipe: DatePipe,
-                  private candidatService: CandidatService,
-                  private notificationService: NotificationService){
-          this.date = this.datePipe.transform(this.myDate, 'yyyy-MM-dd');
-      }
+    constructor(private testService: TestNiveauService,
+        private userAuthentificationService: UserAuthentificationService,
+        private offreService: OffreService,
+        private recruteurService: RecruteurService,
+        public dialog: MatDialog,
+        private route: ActivatedRoute,
+        private router: Router,
+        private datePipe: DatePipe,
+        private candidatService: CandidatService,
+        private notificationService: NotificationService) {
+        this.date = this.datePipe.transform(this.myDate, 'yyyy-MM-dd');
+    }
+
+    tests!: TestNiveau[];
+
+    onChange(value: TestNiveau): void {
+        if (this.offre.testNiveaus.includes(value)) {
+            this.offre.testNiveaus = this.offre.testNiveaus.filter((item) => item !== value);
+        } else {
+            this.offre.testNiveaus.push(value);
+        }
+        console.log(this.offre.testNiveaus);
+    }
 
 
-
-      ngOnInit(): void {
-          this.route.queryParams
-              .subscribe(params => {
-                  this.idUser = params['id']});
-          this.idUserConnecte = this.userAuthentificationService.getUserId();
+    ngOnInit(): void {
+        this.route.queryParams
+            .subscribe(params => {
+                this.idUser = params['id']
+            });
+        this.idUserConnecte = this.userAuthentificationService.getUserId();
         this.getUser();
-      }
+        this.testService.getTestsUser(localStorage.getItem('userId') ?? '').subscribe(
+            (response: TestNiveau[]) => {
+                console.log(response)
+                this.tests = response
+            }
+        );
 
-    public isLogedIn(){
+    }
+
+    public isLogedIn() {
         return this.userAuthentificationService.isLoggedIn();
     }
-    public proprietaireCompte(){
+    public proprietaireCompte() {
         if (this.idUser == this.idUserConnecte)
             return true;
         else
             return false;
     }
 
-      public validerSuppression(idOffre: number){
-          this.dialog.open(ValiderSuppressionComponent, {
-              data:{
-                  id: idOffre
-              },
-          })
-      }
+    public validerSuppression(idOffre: number) {
+        this.dialog.open(ValiderSuppressionComponent, {
+            data: {
+                id: idOffre
+            },
+        })
+    }
 
-      public getUser(): void{
+    public getUser(): void {
         this.recruteurService.findRecruteurtById(this.idUser)
             .subscribe(
-                (responce:Recruteur) => {
-                  for (let offre of responce.offres){
-                      if (Number(offre)){
-                          this.offreService.findOffreById(offre).subscribe(
-                              (responce: Offres)=>{
-                                  this.recruteurOfres.push(responce)
+                (responce: Recruteur) => {
+                    for (let offre of responce.offres) {
+                        if (Number(offre)) {
+                            this.offreService.findOffreById(offre).subscribe(
+                                (responce: Offres) => {
+                                    this.recruteurOfres.push(responce)
 
-                              },(error: HttpErrorResponse)=>{
-           
-                              }
-                          );
-                      }else {
-                          this.recruteurOfres.push(offre)
-                      }
-                  }
-                  this.recruteur = responce;
+                                }, (error: HttpErrorResponse) => {
+
+                                }
+                            );
+                        } else {
+                            this.recruteurOfres.push(offre)
+                        }
+                    }
+                    this.recruteur = responce;
                 },
                 (error: HttpErrorResponse) => {
-                  alert(error.message);
+                    alert(error.message);
                 }
             );
-      }
+    }
 
-      public addOffres(addForm: NgForm) {
-          this.offre.date_ajout = this.date;
+    public addOffres(addForm: NgForm) {
+        this.offre.date_ajout = this.date;
         this.offreService.addOffre(this.offre).subscribe(
             (response: Offres) => {
-              this.addOffreToRecruteur(this.userAuthentificationService.getUserId(), response.id)
+                this.addOffreToRecruteur(this.userAuthentificationService.getUserId(), response.id)
             },
             (error: HttpErrorResponse) => {
-              alert(error.message);
+                alert(error.message);
             }
         );
-      }
-      public addOffreToRecruteur(recruteurId: number, offreId: number): void{
-        this.offreService.addOffreToRecruteur(recruteurId,offreId).subscribe(
+    }
+    public addOffreToRecruteur(recruteurId: number, offreId: number): void {
+        this.offreService.addOffreToRecruteur(recruteurId, offreId).subscribe(
             (response: void) => {
                 this.sendMail(offreId);
                 this.sendNotification(offreId);
             },
             (error: HttpErrorResponse) => {
-              alert(error.message);
+                alert(error.message);
             }
         );
-      }
+    }
 
-    public sendMail(offreId: number): void{
+    public sendMail(offreId: number): void {
         this.candidatService.mailsender(offreId).subscribe(
             (response: Candidat) => {
 
@@ -151,7 +175,7 @@ export class OffresComponent implements OnInit {
         );
     }
 
-    public sendNotification(offreId: number): void{
+    public sendNotification(offreId: number): void {
         this.notificationService.sendNotification(offreId).subscribe(
             (response: any) => {
                 window.location.reload();
@@ -164,25 +188,25 @@ export class OffresComponent implements OnInit {
 
     ajoutOffre() {
         this.addoffre = !this.addoffre;
-      }
-
-    public getDetails(idO: number, idR: number) {
-        this.router.navigate(['/detailOffre'], { queryParams: { idO: idO , idR: idR} });
     }
 
-    public modifier(idOffre: number){
+    public getDetails(idO: number, idR: number) {
+        this.router.navigate(['/detailOffre'], { queryParams: { idO: idO, idR: idR } });
+    }
+
+    public modifier(idOffre: number) {
         this.dialog.open(ModifierOffreComponent, {
             width: "800px",
             height: "90vh",
-            data:{
+            data: {
                 id: idOffre
             },
         })
     }
 
-    public addTestToOffre(idOffre: number){
+    public addTestToOffre(idOffre: number) {
         this.dialog.open(AddTestOffreComponent, {
-            data:{
+            data: {
                 idoffre: idOffre,
                 idRecruteur: this.recruteur.id
             },
@@ -190,7 +214,7 @@ export class OffresComponent implements OnInit {
     }
 
 
-    public deleteTestFromOffre(offreId: number, testId: number): void{
+    public deleteTestFromOffre(offreId: number, testId: number): void {
         this.offreService.removeTestFromOffre(offreId, testId).subscribe(
             (response: any) => {
                 window.location.reload()

@@ -25,7 +25,8 @@ export class AddTestComponent implements OnInit {
       nb_questions: 0,
       duree: 0,
       score_min: 0,
-      scoreTests: []
+      scoreTests: [],
+    user_id:this.userAuthentificationService.getUserId()
   };
   public tests: TestNiveau[] = [];
   public addtest: boolean= false;
@@ -39,6 +40,7 @@ export class AddTestComponent implements OnInit {
     form!: FormGroup;
 
     ngOnInit() {
+
         this.form = new FormGroup({
             question: new FormArray([
                 new FormGroup({
@@ -46,13 +48,27 @@ export class AddTestComponent implements OnInit {
                     rep_vrai: new FormControl(''),
                     rep_faux1: new FormControl(''),
                     rep_faux2: new FormControl(''),
-                    rep_faux3: new FormControl('') 
+                    rep_faux3: new FormControl('')
             })
             ])
         });
-        this.getRecruteur();
+        this.getTestNiveaux();
     }
 
+    getTestNiveaux(){
+        const userId = localStorage.getItem('userId'); 
+
+        if (userId) {
+      this.testNiveauService.getTestsUser(userId).subscribe(
+        (response) => {
+          this.tests = response;
+        },
+        (error: HttpErrorResponse) => {
+          alert(error.message);
+        }
+      );
+    }
+    }
     get question(): FormArray {
         return this.form.get('question') as FormArray;
     }
@@ -70,94 +86,22 @@ export class AddTestComponent implements OnInit {
     }
 
   public addTest() {
-    console.log(this.test);
         this.test.nb_questions= this.form.value.question.length;
+        this.test.user_id=this.userAuthentificationService.getUserId();
         for (let q of this.form.value.question){
             let qstn={
-                id: 0,
+                id: null,
                 enance: q.enance,
                 rep_vrai:[q.rep_vrai],
                 rep_faux:[q.rep_faux1,q.rep_faux2,q.rep_faux3]
             }
             this.test.questions.push(qstn);
         }
-    this.testNiveauService.addTest(this.test).subscribe(
-        (response: TestNiveau) => {
-          for (let q of this.form.value.question){
-              let qstn={
-                  id: 0,
-                  enance: q.enance,
-                  rep_vrai:[q.rep_vrai],
-                  rep_faux:[q.rep_faux1,q.rep_faux2,q.rep_faux3]
-              }
-            this.addQuest(response.id, qstn)
-          }
-          this.addTestToUser(this.userAuthentificationService.getUserId(),response.id);
-          window.location.reload();
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-    );
+    this.testNiveauService.addTest(this.test).subscribe();
   }
-
-  public addQuest(idtest: number, question: Question) {
-    this.questionService.addQuestion(question).subscribe(
-        (response: Question) => {
-          this.addQuestionToTest(idtest, response.id)
-        },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-    );
-  }
-
-  public addQuestionToTest(idtest: number, idquestion: number) {
-    this.testNiveauService.addQuestionToTest(idtest,idquestion).subscribe(
-        (response: TestNiveau) => {},
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-    );
-  }
-
-    public addTestToUser(iduser: number, idtest: number) {
-        if (this.userAuthentificationService.getRole()=='Recruteur'){
-            this.testNiveauService.addTestToRecruteur(iduser,idtest).subscribe(
-                (response: Recruteur) => {
-                },
-                (error: HttpErrorResponse) => {
-                    alert(error.message);
-                }
-            );
-        }else if (this.userAuthentificationService.getRole()=='Admin'){
-            this.testNiveauService.addTestToAdmin(iduser,idtest).subscribe(
-                (response: any) => {
-                },
-                (error: HttpErrorResponse) => {
-                    alert(error.message);
-                }
-            );
-        }
-    }
-
-
-
 
     ajoutTest() {
         this.addtest = !this.addtest;
-    }
-
-
-    public getRecruteur() {
-        this.recruteurService.findRecruteurtById(this.userAuthentificationService.getUserId()).subscribe(
-            (response: Recruteur) => {
-                this.tests = response.testNiveaus;
-            },
-            (error: HttpErrorResponse) => {
-                alert(error.message);
-            }
-        );
     }
 
     public getDetailsTest(idtest: number) {

@@ -12,7 +12,6 @@ import {AjoutArticleComponent} from "./Components/Articles/ajout-article/ajout-a
 import {DetailArticleComponent} from "./Components/Articles/detail-article/detail-article.component";
 import {ContactComponent} from "./Components/Contacts/contact/contact.component";
 import { AuthGuard } from './auth.guard';
-import { AddTestComponent } from './Components/TestNiveau/add-test/add-test.component';
 
 const routes: Routes = [
   {path: 'profile', component:ProfileComponent,canActivate: [AuthGuard]},
@@ -27,7 +26,6 @@ const routes: Routes = [
   {path: 'detail-article', component:DetailArticleComponent},
   {path: 'contact', component:ContactComponent},
 
-  {path: 'add-test', component:AddTestComponent},
 
 ];
 

@@ -9,4 +9,5 @@ export interface TestNiveau{
     titre: string;
     questions: Question[];
     scoreTests: Score[];
+    user_id : string;
 }
