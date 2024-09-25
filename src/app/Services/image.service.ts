@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
-import {Candidat} from "../Entity/Candidat";
 import {Image} from "../Entity/image";
 import {Observable} from "rxjs";
 import {environment} from "../../environments/environment";
@@ -14,9 +13,10 @@ export class ImageService {
   private apiServerUrl = environment.apiBaseUrl;
 
   constructor(private sanitizer: DomSanitizer,
-              private http: HttpClient) { }
+              private http: HttpClient) {
+  }
 
-  public createImage(user: any){
+  public createImage(user: any) {
     const userImage: any = user.image;
 
     const imageFileData = userImage;
@@ -33,7 +33,7 @@ export class ImageService {
 
   }
 
-  public createCv(user: any){
+  public createCv(user: any) {
     const userCv: any = user.cv;
 
     const cvFileData = userCv;
@@ -50,28 +50,12 @@ export class ImageService {
 
   }
 
-  public createLm(user: any){
-    const userLm: any = user.lettre_motivation;
 
-    const lmFileData = userLm;
-    const cvBlob = this.dataURItoBlob(lmFileData.imageBytes, lmFileData.type);
-
-    const lmFile = new File([cvBlob], lmFileData.nom, {type: lmFileData.type});
-    const lmFinal: Image = {
-      file: lmFile,
-      url: this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(lmFile))
-    }
-
-    user.lettre_motivation = lmFinal;
-    return user;
-
-  }
-
-  public dataURItoBlob(imageBytes: any, imageType: any){
+  public dataURItoBlob(imageBytes: any, imageType: any) {
     const byteString = window.atob(imageBytes);
     const arrayBuffer = new ArrayBuffer(byteString.length);
     const int8Array = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < byteString.length; i++){
+    for (let i = 0; i < byteString.length; i++) {
       int8Array[i] = byteString.charCodeAt(i);
     }
 
@@ -79,7 +63,7 @@ export class ImageService {
     return blob;
   }
 
-  public deleteImage(imageId: number): Observable<void>{
+  public deleteImage(imageId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiServerUrl}/image/delete/${imageId}`);
   }
 

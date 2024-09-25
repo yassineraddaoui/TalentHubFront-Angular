@@ -34,10 +34,6 @@ export class CandidatService {
     return this.http.put<Candidat>(`${this.apiServerUrl}/candidat/update/cv`, candidat);
   }
 
-  public updateCandidatLM(candidat: FormData): Observable<Candidat>{
-    return this.http.put<Candidat>(`${this.apiServerUrl}/candidat/update/lm`, candidat);
-  }
-
   public deleteCandidat(candidatId: number): Observable<void>{
     return this.http.delete<void>(`${this.apiServerUrl}/candidat/delete/${candidatId}`);
   }
@@ -47,7 +43,7 @@ export class CandidatService {
   }
 
   public addPostulationToCandidat(candidatId: number, offreId: number, postulationId: number): Observable<void>{
-    return this.http.get<void>(`http://localhost:8000/candidat/postulation/${candidatId}/${offreId}/${postulationId}`);
+    return this.http.get<void>(`http://localhost:8080/candidat/postulation/${candidatId}/${offreId}/${postulationId}`);
   }
 
   public findCandidatByIdPostulation(id: number): Observable<number[]>{

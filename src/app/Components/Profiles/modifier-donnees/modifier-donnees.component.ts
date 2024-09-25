@@ -30,7 +30,6 @@ export class ModifierDonneesComponent implements OnInit {
       num_tel: 0,
       fonction: "",
       cv: [],
-      lettre_motivation: [],
       competances: [],
       formations: [],
   };
@@ -58,7 +57,7 @@ export class ModifierDonneesComponent implements OnInit {
 
   public updateCandidat(candidat: Candidat): void{
     this.candidatService.updateCandidat(candidat).subscribe(
-        (response: Candidat) => {
+        () => {
           window.location.reload()
         },
         (error: HttpErrorResponse) => {

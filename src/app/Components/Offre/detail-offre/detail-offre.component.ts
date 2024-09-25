@@ -90,10 +90,7 @@ export class DetailOffreComponent implements OnInit {
           file: new File([], ""),
           url: ""
       },
-      lettre_motivation: {
-          file: new File([], ""),
-          url: ""
-      }
+
   }
 
   idPostulation = 0;
@@ -114,10 +111,7 @@ export class DetailOffreComponent implements OnInit {
           file: new File([], ""),
           url: ""
       },
-      lettre_motivation: {
-          file: new File([], ""),
-          url: ""
-      },
+
       mail: "",
       mdp: "",
       nom: "",
@@ -139,7 +133,7 @@ export class DetailOffreComponent implements OnInit {
     this.getRecruteur();
     this.id = this.userAuthentificationService.getUserId();
     this.idCandidat = this.userAuthentificationService.getUserId();
-    if (this.isLogedIn() && this.role == 'Condidat'){
+    if (this.role == 'Condidat'){
         this.getCandidatById(this.id);
     }
   }
@@ -149,8 +143,8 @@ export class DetailOffreComponent implements OnInit {
         (responce:Offres) => {
               this.offre = responce;
               for (let i of this.offre.postulations){
-                  this.imageService.createCv(i)
-                  this.imageService.createLm(i)
+                this.imageService.createCv(i)
+
                   if (i.decision_recruteur == 'Accepté'){
                       this.candidatAccepter=1+this.candidatAccepter;
                   }
@@ -174,14 +168,14 @@ export class DetailOffreComponent implements OnInit {
 
                                       },
                                       (error: HttpErrorResponse) => {
-                   
+
                                       }
                                   );
                               }
                               this.candidatPostulation.set(this.Candidat,i);
                           },
                           (error: HttpErrorResponse) => {
-       
+
                           }
                       );
             }
@@ -237,7 +231,7 @@ export class DetailOffreComponent implements OnInit {
                         this.postule(this.Candidat.postulations,responce.postulations);
                     },
                     (error: HttpErrorResponse) => {
- 
+
                     }
                 );
         },
@@ -291,7 +285,7 @@ export class DetailOffreComponent implements OnInit {
                         window.location.reload();
                     },
                     (error: HttpErrorResponse) => {
- 
+
                     }
                 );
             },
@@ -304,7 +298,5 @@ export class DetailOffreComponent implements OnInit {
     public afficherCV(url: any) {
         window.open(url);
     }
-    public afficherLM(url: any) {
-        window.open(url);
-    }
+
 }

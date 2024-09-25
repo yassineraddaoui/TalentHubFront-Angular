@@ -5,5 +5,4 @@ export interface Postulation{
     date_postulation: string,
     decision_recruteur: string,
     cv: Image;
-    lettre_motivation: Image;
 }

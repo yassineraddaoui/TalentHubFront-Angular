@@ -132,7 +132,7 @@
                             <mat-icon ><span  style="color: #1eb91e" class="material-symbols-outlined">check_circle</span>
                             </mat-icon>
                         </button>
-                        
+
                     </div>
                     <div>
                         <mat-card-content style="display: flex; align-items: center; justify-content: space-between; padding-left: 50px; padding-right: 50px">
@@ -162,14 +162,7 @@
                             </div>
 
                             <div style="display: flex; width: 390px; justify-content: space-around; position: relative;margin-bottom: 10px">
-                                <div class="card">
-                                    <pdf-viewer [src]="candidat.value.lettre_motivation.url.changingThisBreaksApplicationSecurity"
-                                                [render-text]="false"
-                                                [original-size]="false"
-                                                style="width: 170px; height: 255px;">
-                                    </pdf-viewer>
-                                </div>
-                                <div class="card">
+                                <div class="card" *ngIf="candidat.value.cv != null">
                                     <pdf-viewer id="tst" [src]="candidat.value.cv.url.changingThisBreaksApplicationSecurity"
                                                 [render-text]="false"
                                                 [original-size]="false"
@@ -179,11 +172,6 @@
                                 <button mat-icon-button color="primary" style="position: absolute;right: 10px;z-index: 999;"
                                         matTooltip="Ouvrir"
                                         (click)="afficherCV(candidat.value.cv.url.changingThisBreaksApplicationSecurity)">
-                                    <span class="material-symbols-outlined">open_in_new</span>
-                                </button>
-                                <button mat-icon-button color="primary" style="position: absolute;left: 145px;z-index: 999;"
-                                        matTooltip="Ouvrir"
-                                        (click)="afficherLM(candidat.value.lettre_motivation.url.changingThisBreaksApplicationSecurity)">
                                     <span class="material-symbols-outlined">open_in_new</span>
                                 </button>
                             </div>

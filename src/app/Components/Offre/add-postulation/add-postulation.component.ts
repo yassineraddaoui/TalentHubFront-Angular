@@ -9,9 +9,7 @@ import {DatePipe} from "@angular/common";
 import {UserAuthentificationService} from "../../../Services/user-authentification.service";
 import {OffreService} from "../../../Services/offre.service";
 import {Offres} from "../../../Entity/Offres";
-import {OffresComponent} from "../offres/offres.component";
 import {TestNiveauService} from "../../../Services/test-niveau.service";
-import {Candidat} from "../../../Entity/Candidat";
 import {Router} from "@angular/router";
 import {Score} from "../../TestNiveau/afficher-test/afficher-test.component";
 import {PasserTestComponent} from "../../TestNiveau/passer-test/passer-test.component";
@@ -69,13 +67,9 @@ export class AddPostulationComponent implements OnInit {
     file: new File([], ""),
     url: ""
   }
-  public lettre_motivation: Image = {
-    file: new File([], ""),
-    url: ""
-  }
+
 
   public ajoutCV: boolean = false;
-  public ajoutLM: boolean = false;
 
   ngOnInit(): void {
     this.getOffre();
@@ -95,28 +89,12 @@ export class AddPostulationComponent implements OnInit {
     this.addCV(event.target.files);
   }
 
-  onDragOverLM(event:any) {
-    event.preventDefault();
-  }
-
-  onDropSuccessLM(event:any) {
-    event.preventDefault();
-
-    this.addLM(event.dataTransfer.files);
-  }
-  onChangeLM(event:any) {
-    this.addLM(event.target.files);
-  }
-
   public addPostulation(candidatId: number,offreId: number): void{
     this.postulation.date_postulation = this.date;
     this.postulationService.addPostulation(this.postulation).subscribe(
         (response: Postulation) => {
           if (this.ajoutCV) {
             this.updatePostulationCV(response);
-          }
-          if (this.ajoutLM) {
-            this.updatePostulationLM(response);
           }
           this.addPostulationToCandidat(candidatId, offreId, response.id)
         },
@@ -162,30 +140,8 @@ export class AddPostulationComponent implements OnInit {
     return formData;
   }
 
-  public updatePostulationLM(postulation: any): void{
-    postulation.lettre_motivation = this.lettre_motivation;
-    const lmFormData = this.prepareFormDataLM(postulation)
-    this.postulationService.updatePostulationLM(lmFormData).subscribe(
-        (response: Postulation) => {},
-        (error: HttpErrorResponse) => {
-          alert(error.message);
-        }
-    );
-  }
 
-  prepareFormDataLM(postulation: Postulation): FormData{
-    const formData = new FormData();
-    formData.append(
-        'postulation',
-        new Blob([JSON.stringify(postulation)], {type: 'application/json'})
-    );
-    formData.append(
-        'lm',
-        postulation.lettre_motivation.file,
-        postulation.lettre_motivation.file.name
-    );
-    return formData;
-  }
+
 
   public addCV(files: File[]){
     if (files){
@@ -200,25 +156,10 @@ export class AddPostulationComponent implements OnInit {
       this.ajoutCV= true
     }
   }
-  public addLM(files: File[]){
-    if (files){
-      const file = files[0];
 
-      const lm: Image = {
-        file: file,
-        // @ts-ignore
-        url: null
-      }
-      this.lettre_motivation=lm;
-      this.ajoutLM= true;
-    }
-  }
 
   public confirm(): boolean{
-    if (this.ajoutCV && this.ajoutLM){
-      return false;
-    }
-    return true;
+    return this.ajoutCV;
   }
 
 

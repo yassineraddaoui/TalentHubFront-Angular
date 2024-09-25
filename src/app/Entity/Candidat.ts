@@ -12,7 +12,6 @@ export interface Candidat {
     fonction: string;
     image: Image;
     cv: Image;
-    lettre_motivation: Image;
     competances: [];
     formations: [];
     postulations: Postulation[];

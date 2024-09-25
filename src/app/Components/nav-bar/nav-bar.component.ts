@@ -49,10 +49,7 @@ export class NavBarComponent implements OnInit {
       file : new File([],""),
       url : ""
     },
-    lettre_motivation: {
-      file : new File([],""),
-      url : ""
-    },
+
     competances: [],
     formations: [],
     notification: []
@@ -124,7 +121,7 @@ export class NavBarComponent implements OnInit {
                                           this.Offres.set(n.offres, responce);
                                         },
                                         (error: HttpErrorResponse) => {
-                   
+
                                         }
                                     );
                               }else {
@@ -135,7 +132,7 @@ export class NavBarComponent implements OnInit {
                                           this.Offres.set(n.offres, responce);
                                         },
                                         (error: HttpErrorResponse) => {
-                   
+
                                         }
                                     );
 
@@ -151,7 +148,7 @@ export class NavBarComponent implements OnInit {
                                           this.OffresVu.set(n.offres, responce);
                                         },
                                         (error: HttpErrorResponse) => {
-                   
+
                                         }
                                     );
                               }else {
@@ -162,7 +159,7 @@ export class NavBarComponent implements OnInit {
                                           this.OffresVu.set(n.offres, responce);
                                         },
                                         (error: HttpErrorResponse) => {
-                   
+
                                         }
                                     );
 
@@ -172,7 +169,7 @@ export class NavBarComponent implements OnInit {
                           }
                         },
                         (error: HttpErrorResponse) => {
-   
+
                         }
                     );
               }
@@ -202,8 +199,6 @@ export class NavBarComponent implements OnInit {
 
 
   public notification_verif(n: Notification[]){
-    if (n.length==0)
-      return true;
-    return false;
+    return n.length==0;
   }
 }

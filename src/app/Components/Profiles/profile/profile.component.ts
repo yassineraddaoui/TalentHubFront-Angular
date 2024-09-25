@@ -43,10 +43,7 @@ export class ProfileComponent implements OnInit {
           file: new File([], ""),
           url: ""
       },
-      lettre_motivation: {
-          file: new File([], ""),
-          url: ""
-      },
+
       competances: [],
       formations: [],
       mailNotifications: true
@@ -89,10 +86,7 @@ export class ProfileComponent implements OnInit {
         return this.userAuthentificationService.isLoggedIn();
     }
     public proprietaireCompte(){
-      if (this.idUser == this.idUserConnecte)
-          return true;
-      else
-          return false;
+          return this.idUser == this.idUserConnecte;
     }
 
     openDialog() {
@@ -111,9 +105,7 @@ export class ProfileComponent implements OnInit {
                     if (this.user.cv){
                         this.imageService.createCv(this.user);
                     }
-                    if (this.user.lettre_motivation) {
-                        this.imageService.createLm(this.user);
-                    }
+
                 }
             },
             (error: HttpErrorResponse) => {
@@ -163,17 +155,7 @@ export class ProfileComponent implements OnInit {
         );
     }
 
-    public updateCandidatLm(): void{
-        const userFormData = this.prepareFormDataLm(this.user)
-        this.candidatService.updateCandidatLM(userFormData).subscribe(
-            (response: Candidat) => {
-                this.deleteImage(this.LmId);
-            },
-            (error: HttpErrorResponse) => {
-                alert(error.message);
-            }
-        );
-    }
+
 
     prepareFormDataCv(candidat: Candidat): FormData{
         const formData = new FormData();
@@ -189,19 +171,6 @@ export class ProfileComponent implements OnInit {
         return formData;
     }
 
-    prepareFormDataLm(candidat: Candidat): FormData{
-        const formData = new FormData();
-        formData.append(
-            'user',
-            new Blob([JSON.stringify(candidat)], {type: 'application/json'})
-        );
-        formData.append(
-            'lm',
-            candidat.lettre_motivation.file,
-            candidat.lettre_motivation.file.name
-        );
-        return formData;
-    }
 
     prepareFormData(recruteur: Recruteur): FormData{
         const formData = new FormData();
@@ -232,19 +201,7 @@ export class ProfileComponent implements OnInit {
         this.updateCandidatCV();
     }
 
-    updateLm(event: any){
-        if (event.target.files){
-            const file = event.target.files[0];
 
-            const image: Image = {
-                file: file,
-                // @ts-ignore
-                url: null
-            }
-            this.user.lettre_motivation=image;
-        }
-        this.updateCandidatLm();
-    }
 
     addCv(event: any){
         if (event.target.files){
@@ -258,32 +215,6 @@ export class ProfileComponent implements OnInit {
             this.user.cv=image;
         }
         this.addCandidatCV();
-    }
-
-    addLettreMotivation(event: any){
-        if (event.target.files){
-            const file = event.target.files[0];
-
-            const image: Image = {
-                file: file,
-                // @ts-ignore
-                url: null
-            }
-            this.user.lettre_motivation=image;
-        }
-        this.addCandidatLettreMotivation();
-    }
-
-    public addCandidatLettreMotivation(): void{
-        const userFormData = this.prepareFormDataLm(this.user)
-        this.candidatService.updateCandidatLM(userFormData).subscribe(
-            (response: Candidat) => {
-                window.location.reload();
-            },
-            (error: HttpErrorResponse) => {
-                alert(error.message);
-            }
-        );
     }
 
     public addCandidatCV(): void{
@@ -331,7 +262,6 @@ export class ProfileComponent implements OnInit {
             .subscribe(
                 (responce:any) => {
                     this.cvId = responce.cv.id;
-                    this.LmId = responce.lettre_motivation.id;
                 },
                 (error: HttpErrorResponse) => {
                     alert(error.message);
